@@ -4,25 +4,33 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+const dns = require('dns');
+
+dns.setServers([
+  '8.8.8.8',
+  '1.1.1.1'
+]);
+
 const app = express();
 app.use(express.json()); 
 
+
 // 🔗 Import Routes (Aapke naye naming convention ke hisaab se)
-const userRoutes = require('./routes/user.routes');
-const vehicleRoutes = require('./routes/vehicle.routes');
-const orderRoutes = require('./routes/order.routes');
+const orderRoute  = require('./../Backend/src/routes/order.route')
+const userRoute = require('./../Backend/src/routes/user.route');
+const { ConnectDB } = require('./src/config/db');
+const vehicleRoute = require('./src/routes/vehicle.route');
 
 // 🔗 APIs ko mount karein
-app.use('/api/users', userRoutes);
-app.use('/api/vehicles', vehicleRoutes);
-app.use('/api/orders', orderRoutes);
+app.use('/api/users', userRoute);
+app.use('/api/vehicles', vehicleRoute);
+app.use('/api/orders', orderRoute);
 
 // Server aur Database connection
 const PORT = process.env.PORT || 5000;
 
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log("Database connected successfully!");
-        app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-    })
-    .catch((err) => console.log("Database connection failed:", err));
+ConnectDB()
+
+app.listen(PORT, ()=>{
+    console.log('server is running...')
+})

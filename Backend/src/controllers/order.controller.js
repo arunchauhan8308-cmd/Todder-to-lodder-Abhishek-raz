@@ -1,8 +1,6 @@
-const OrderModel = require('../models/OrderModel');
 const { calculateFare } = require('../utils/fareCalculator');
 const { calculateDistance } = require('../utils/distanceCalculator');
-const { calculateFare } = require('../utils/fareCalculator');
-
+const OrderModel = require('../models/order.model');
 
 exports.createOrder = async (req, res) => {
     try {

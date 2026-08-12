@@ -1,10 +1,12 @@
 const express = require('express');
-const router = express.Router();
+const orderRoute = express.Router();
+const loaderController = require('./../controllers/loader.controller')
 const { getFareEstimate, createOrder, acceptOrder } = require('../controllers/order.controller');
-const { authenticateUser } = require('../middlewares/auth.middleware');
+const { authenticateUser } = require('../utils/auth.util');
 
-router.post('/estimate', authenticateUser, getFareEstimate);
-router.post('/create', authenticateUser, createOrder);
-router.patch('/:orderId/accept', authenticateUser, acceptOrder);
+orderRoute.post('/estimate', authenticateUser, getFareEstimate);
+orderRoute.post('/create', authenticateUser, createOrder);
+orderRoute.patch('/:orderId/accept', authenticateUser, acceptOrder);
+orderRoute.get('/nearby', authenticateUser, loaderController.getNearbyOrders);
 
-module.exports = router;
+module.exports = orderRoute;

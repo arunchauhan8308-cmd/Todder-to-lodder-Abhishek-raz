@@ -1,11 +1,11 @@
 const express = require('express');
-const router = express.Router();
+const vehicleRouter = express.Router();
 const { registerVehicle, getMyVehicles, toggleAvailability, findNearbyLoaders } = require('../controllers/vehicle.controller');
-const { authenticateUser } = require('../middlewares/auth.middleware');
+const authenticate = require('./../utils/auth.util')
 
-router.get('/nearby', authenticateUser, findNearbyLoaders);
-router.get('/my-vehicles', authenticateUser, getMyVehicles);
-router.post('/register', authenticateUser, registerVehicle);
-router.patch('/:id/toggle-status', authenticateUser, toggleAvailability);
+vehicleRouter.get('/nearby', authenticate.authenticateUser, findNearbyLoaders);
+vehicleRouter.get('/my-vehicles', authenticate.authenticateUser, getMyVehicles);
+vehicleRouter.post('/register', authenticate.authenticateUser, registerVehicle);
+vehicleRouter.patch('/:id/toggle-status', authenticate.authenticateUser, toggleAvailability);
 
-module.exports = router;
+module.exports = vehicleRouter;
