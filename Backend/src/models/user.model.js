@@ -1,6 +1,7 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
+const { generateToken } = require('../utils/auth.util');
 
-const UserSchema = new Schema({
+const UserSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true
@@ -16,7 +17,7 @@ const UserSchema = new Schema({
         unique: true,
         sparse: true
     },
-    password_hash: {
+    password: {
         type: String,
         required: true
     },
@@ -36,9 +37,16 @@ const UserSchema = new Schema({
         type: Number,
         default: 0
     },
-}, { timestamps: true });
-
+}, {
+    timestamps: true
+},
+);
+const ShopOwnerModel = mongoose.model('ShopOwner', UserSchema, 'shop_owners');
+const LoaderModel = mongoose.model('Loader', UserSchema, 'loaders');
+const AdminModel = mongoose.model('Admin', UserSchema, 'admins');
 
 module.exports = {
-    UserSchema
-}
+    ShopOwnerModel,
+    LoaderModel,
+    AdminModel
+};

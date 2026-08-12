@@ -1,10 +1,10 @@
-const mongoose = require('mongoose')
-
+const mongoose = require('mongoose');
+const { Schema } = mongoose; 
 
 const VehicleSchema = new Schema({
     loader_id: {
         type: Schema.Types.ObjectId,
-        ref: 'User',
+        ref: 'Loader', 
         required: true
     },
     vehicle_type: {
@@ -41,12 +41,13 @@ const VehicleSchema = new Schema({
         },
         coordinates: {
             type: [Number],
-            default: [0, 0]
-        } // [lng, lat]
+            default: [0, 0]  
+        }
     },
 }, { timestamps: true });
 
+VehicleSchema.index({ current_location: '2dsphere' });
 
-module.exports = {
-    VehicleSchema
-}
+const VehicleModel = mongoose.model('Vehicle', VehicleSchema);
+
+module.exports = VehicleModel;
