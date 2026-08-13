@@ -131,3 +131,54 @@ exports.loginUser = async (req, res) => {
         });
     }
 };
+
+
+
+exports.updateOnlineStatus = async (req, res) => {
+    try {
+        const { userId, is_online, role } = req.body;
+
+        // Sirf loader hi online/offline ho sakta hai
+        if (role === 'loader') {
+            const updatedUser = await LoaderModel.findByIdAndUpdate(
+                userId, 
+                { is_online: is_online },
+                { new: true } // Yeh update hone ke baad naya data return karta hai
+            );
+            
+            return res.status(200).json({ 
+                success: true, 
+                message: `Status updated to ${is_online ? 'Online' : 'Offline'}`,
+                data: updatedUser
+            });
+        }
+
+        return res.status(400).json({ 
+            success: false, 
+            message: "Only loaders can change online status" 
+        });
+
+    } catch (error) {
+        console.error("Status Update Error:", error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+
+exports.getProfile = async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const role = req.user.role;
+        
+        let user;
+        if (role === 'shop_owner') user = await ShopOwnerModel.findById(userId);
+        else if (role === 'loader') user = await LoaderModel.findById(userId);
+        else if (role === 'admin') user = await AdminModel.findById(userId);
+
+        if (!user) return res.status(404).json({ success: false, message: "User not found" });
+
+        return res.status(200).json({ success: true, data: user });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};

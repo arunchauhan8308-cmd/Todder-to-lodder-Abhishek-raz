@@ -16,12 +16,10 @@ const OrderBidSchema = new mongoose.Schema({
         ref: 'User', 
         required: true 
     },
-    // Optional: If you want loaders to negotiate the price, you can save their offer here
     proposed_fare: { 
         type: Number, 
         default: null 
     },
-    // Optional: Let the shop owner know how fast they can reach the pickup
     eta_minutes: { 
         type: Number, 
         default: null 
@@ -33,7 +31,6 @@ const OrderBidSchema = new mongoose.Schema({
     }
 }, { timestamps: true });
 
-// This index ensures that one loader cannot spam or send multiple requests for the same order
 OrderBidSchema.index({ order_id: 1, loader_id: 1 }, { unique: true });
 
 module.exports = mongoose.model('OrderBid', OrderBidSchema);

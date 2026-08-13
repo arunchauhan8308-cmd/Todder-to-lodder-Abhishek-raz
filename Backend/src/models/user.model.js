@@ -37,6 +37,10 @@ const UserSchema = new mongoose.Schema({
         type: Number,
         default: 0
     },
+    is_online: {
+        type: Boolean,
+        default: false // By default offline rahega
+    }
 }, {
     timestamps: true
 },

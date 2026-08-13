@@ -18,9 +18,9 @@ exports.getNearbyOrders = async (req, res) => {
             return res.status(404).json({ success: false, message: "Vehicle not found. Please register a vehicle first." });
         }
 
-        if (loaderVehicle.document_status !== 'verified') {
-            return res.status(403).json({ success: false, message: "Your vehicle documents are not verified yet." });
-        }
+        // if (loaderVehicle.document_status !== 'verified') {
+        //     return res.status(403).json({ success: false, message: "Your vehicle documents are not verified yet." });
+        // }
 
         // Extract loader's current coordinates
         const loaderCoordinates = loaderVehicle.current_location.coordinates;

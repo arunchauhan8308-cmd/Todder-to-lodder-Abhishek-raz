@@ -1,0 +1,340 @@
+/* Dashboard.css - Rapido Style Theme */
+
+@import url('https://fonts.googleapis.com/css2?family=Fira+Sans:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+* {
+  box-sizing: border-box;
+  font-family: 'Fira Sans', sans-serif;
+}
+
+/* App Background - Light grey like real apps */
+.rapido-wrapper {
+  min-height: 100vh;
+  background-color: #f4f5f7;
+  color: #1a1a1a; /* Dark text */
+}
+
+/* Rapido Signature Yellow Navbar */
+.rapido-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 5%;
+  background-color: #F9C935; /* Rapido Yellow */
+  color: #1a1a1a;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.nav-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-logo {
+  background-color: #1a1a1a;
+  color: #F9C935;
+  font-weight: 900;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  font-size: 18px;
+}
+
+.brand-name {
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.nav-profile {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  text-align: right;
+}
+
+.user-name {
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.user-role {
+  font-size: 12px;
+  font-weight: 600;
+  color: #4a4a4a;
+}
+
+.logout-button {
+  background-color: #1a1a1a;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-button:hover {
+  background-color: #333333;
+}
+
+/* Main Content Area */
+.rapido-content {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 30px 20px;
+}
+
+/* Status Section (Greeting + Toggle) */
+.status-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+  gap: 15px;
+}
+
+.greeting {
+  font-size: 28px;
+  margin: 0 0 5px 0;
+  color: #1a1a1a;
+}
+
+.greeting-sub {
+  margin: 0;
+  color: #666666;
+  font-size: 16px;
+}
+
+/* Online/Offline Toggle Switch */
+.status-toggle-box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: white;
+  padding: 10px 20px;
+  border-radius: 30px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.status-text {
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 50px;
+  height: 28px;
+}
+
+.switch input { 
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #ccc;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 20px;
+  width: 20px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  transition: .4s;
+}
+
+input:checked + .slider {
+  background-color: #22c55e; /* Green for online */
+}
+
+input:checked + .slider:before {
+  transform: translateX(22px);
+}
+
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* Quick Stats Banner */
+.stats-banner {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  padding: 20px;
+  border-radius: 16px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+  margin-bottom: 30px;
+}
+
+.stat-box {
+  flex: 1;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin-bottom: 4px;
+}
+
+.stat-label {
+  font-size: 13px;
+  color: #666666;
+  font-weight: 500;
+}
+
+.stat-divider {
+  width: 1px;
+  background-color: #e5e7eb;
+  margin: 0 10px;
+}
+
+/* Actions Section */
+.section-title {
+  font-size: 20px;
+  margin-bottom: 15px;
+  color: #1a1a1a;
+}
+
+.rapido-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* Cards */
+.rapido-card {
+  background-color: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid transparent;
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.rapido-card:hover {
+  transform: translateY(-3px);
+}
+
+.highlight-card {
+  border: 2px solid #F9C935; /* Yellow border for the main action */
+}
+
+.card-icon {
+  font-size: 32px;
+  margin-bottom: 15px;
+}
+
+.rapido-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 20px;
+  color: #1a1a1a;
+}
+
+.rapido-card p {
+  color: #666666;
+  font-size: 14px;
+  margin: 0 0 20px 0;
+  flex-grow: 1;
+  line-height: 1.5;
+}
+
+/* Buttons */
+.rapido-primary-btn {
+  background-color: #F9C935;
+  color: #1a1a1a;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rapido-primary-btn:hover:not(:disabled) {
+  background-color: #e5b82c;
+}
+
+.rapido-primary-btn:disabled {
+  background-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.rapido-secondary-btn {
+  background-color: #f3f4f6;
+  color: #1a1a1a;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.rapido-secondary-btn:hover {
+  background-color: #e5e7eb;
+}
+
+/* Loading Screen */
+.loading-screen {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #F9C935;
+  color: #1a1a1a;
+  font-size: 24px;
+  font-weight: 800;
+}
+
+/* Responsive for Mobile Phones */
+@media (max-width: 650px) {
+  .nav-profile .profile-info {
+    display: none; /* Hide names on small screens to save space */
+  }
+  
+  .status-section {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .status-toggle-box {
+    width: 100%;
+    justify-content: space-between;
+  }
+}

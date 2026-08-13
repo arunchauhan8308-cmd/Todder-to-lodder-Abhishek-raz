@@ -20,11 +20,23 @@ const orderRoute  = require('./../Backend/src/routes/order.route')
 const userRoute = require('./../Backend/src/routes/user.route');
 const { ConnectDB } = require('./src/config/db');
 const vehicleRoute = require('./src/routes/vehicle.route');
+const cors = require('cors')
+const path = require('path')
+
+// middleware
+app.use(cors());
+
+app.use(cors({
+  origin: 'http://localhost:5173', 
+  credentials: true 
+}));
 
 // 🔗 APIs ko mount karein
 app.use('/api/users', userRoute);
 app.use('/api/vehicles', vehicleRoute);
 app.use('/api/orders', orderRoute);
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Server aur Database connection
 const PORT = process.env.PORT || 5000;
