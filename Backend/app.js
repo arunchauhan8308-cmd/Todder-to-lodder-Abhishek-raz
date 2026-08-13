@@ -21,7 +21,8 @@ const userRoute = require('./../Backend/src/routes/user.route');
 const { ConnectDB } = require('./src/config/db');
 const vehicleRoute = require('./src/routes/vehicle.route');
 const cors = require('cors')
-const path = require('path')
+const path = require('path');
+const PaymentRouter = require('./src/routes/payment.route');
 
 // middleware
 app.use(cors());
@@ -35,6 +36,7 @@ app.use(cors({
 app.use('/api/users', userRoute);
 app.use('/api/vehicles', vehicleRoute);
 app.use('/api/orders', orderRoute);
+app.use('/api/payments', PaymentRouter);
 
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

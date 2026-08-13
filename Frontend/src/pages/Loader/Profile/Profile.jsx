@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getProfileApi } from '../../api/api';
+import { getProfileApi } from '../../../api/api';
 import './Profile.css';
 
 const Profile = () => {
@@ -23,7 +23,7 @@ const Profile = () => {
             <div className="profile-main-layout">
                 
                 {/* Back Button Added Here */}
-                <button className="back-nav-btn" onClick={() => navigate('/dashboard')}>
+                <button className="back-nav-btn" onClick={() => navigate('/loader/dashboard')}>
                     ← Dashboard
                 </button>
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { updateStatusApi } from '../../api/api'; 
-import './Dashboard.css';
+import { updateStatusApi } from '../../../api/api'; 
+import './dashboard.css';
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -32,6 +32,12 @@ const Dashboard = () => {
     localStorage.removeItem('user');
     navigate('/login');
   };
+  const handleNavigation =()=> {
+    navigate('/profile')
+  }
+  const handleNavigationOrder = ()=> {
+    navigate('/loader/order')
+  }
 
   const toggleOnlineStatus = async () => {
     if (isUpdating) return;
@@ -67,14 +73,14 @@ const Dashboard = () => {
       
       {/* Modern Sleek Navbar */}
       <nav className="dashboard-navbar">
-        <div className="nav-brand" onClick={() => navigate('/dashboard')}>
+        <div className="nav-brand" onClick={() => navigate('/loader/dashboard')}>
           <div className="brand-logo">GL</div>
           <span className="brand-name">GoLoader</span>
         </div>
 
         {/* Laptop / Desktop Navigation Links */}
         <div className="nav-menu desktop-only">
-          <button onClick={() => navigate('/dashboard')} className="nav-link active">Dashboard</button>
+          <button onClick={() => navigate('/loader/dashboard')} className="nav-link active">Dashboard</button>
           <button onClick={() => navigate('/profile')} className="nav-link">Profile</button>
           {user.role === 'loader' && (
             <>
@@ -86,9 +92,9 @@ const Dashboard = () => {
 
         {/* Laptop Right User & Logout Actions */}
         <div className="nav-right desktop-only">
-          <div className="user-pill">
+          <div onClick={handleNavigation} className="user-pill">
             <div className="user-avatar">{user.name.charAt(0).toUpperCase()}</div>
-            <div className="user-meta">
+            <div   className="user-meta">
               <span className="u-name">{user.name}</span>
               <span className="u-role">{user.role === 'loader' ? 'Driver Partner' : 'Shop Owner'}</span>
             </div>
@@ -113,7 +119,7 @@ const Dashboard = () => {
             </div>
           </div>
           <div className="drawer-links">
-            <button onClick={() => { setMenuOpen(false); navigate('/dashboard'); }}>🏠 Dashboard</button>
+            <button onClick={() => { setMenuOpen(false); navigate('/loader/dashboard'); }}>🏠 Dashboard</button>
             <button onClick={() => { setMenuOpen(false); navigate('/profile'); }}>👤 My Profile</button>
             {user.role === 'loader' && (
               <>
@@ -197,8 +203,9 @@ const Dashboard = () => {
                 </div>
                 <h3>Find New Loads</h3>
                 <p>Browse open delivery contracts matching your vehicle capacity nearby.</p>
-                <button className="card-btn primary" disabled={!isOnline}>
+                <button className="card-btn primary" disabled={!isOnline} onClick={handleNavigationOrder}>
                   {isOnline ? 'Search Available Loads' : 'Go Online to Search'}
+                  
                 </button>
               </div>
 
@@ -210,8 +217,8 @@ const Dashboard = () => {
                 <h3>Vehicle Hub</h3>
                 <p>Inspect registered vehicle statuses or onboard a new transporter.</p>
                 <div className="dual-btns">
-                  <button className="card-btn outline" onClick={() => navigate('/vehicles/all')}>All Vehicles</button>
-                  <button className="card-btn dark" onClick={() => navigate('/vehicle/add')}>Add Vehicle</button>
+                  <button className="card-btn outline" onClick={() => navigate('/my-vehicles')}>All Vehicles</button>
+                  <button className="card-btn dark" onClick={() => navigate('/add-vehicle')}>Add Vehicle</button>
                 </div>
               </div>
             </>

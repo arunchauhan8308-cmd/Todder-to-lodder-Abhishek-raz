@@ -52,7 +52,7 @@ export const updateStatusApi = async (data) => {
       }
     });
     // Backend API ko PUT request bhej rahe hain
-    
+
     return response.data;
   } catch (error) {
     if (error.response && error.response.data) {
@@ -135,3 +135,124 @@ export const getProfileApi = async () => {
   });
   return response.data;
 };
+
+// --- Nearby Active Loads fetch karne ke liye API function ---
+// --- Loader ke liye nearby orders fetch karne ki API function ---
+export const fetchNearbyOrdersApi = async () => {
+  try {
+    const token = localStorage.getItem('token');
+
+    // Backend route path apne main router (e.g., /orders/nearby) ke hisaab se check kar lein
+    const response = await API.get('/orders/nearby', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    return response.data; // Yeh { success: true, count: ..., data: [...] } return karega
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    throw new Error('Failed to fetch nearby orders.');
+  }
+};
+
+// Accept order API with vehicle_id in request body
+export const acceptOrderApi = async (orderId, vehicleId) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    const response = await API.patch(`/orders/${orderId}/accept`, 
+      { vehicle_id: vehicleId }, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    throw new Error('Failed to accept this order.');
+  }
+};
+
+// --- Fetch accepted orders for the logged-in loader ---
+export const fetchAcceptedOrdersApi = async () => {
+  try {
+    const token = localStorage.getItem('token');
+
+    const response = await API.get('/orders/accept-order', {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    throw new Error('Failed to fetch accepted orders.');
+  }
+};
+
+// --- Fetch single order details by ID ---
+export const fetchOrderDetailsApi = async (orderId) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    const response = await API.get(`/orders/${orderId}`, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+    console.log(response)
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    throw new Error('Failed to fetch order details.');
+  }
+};
+
+// 3. Update Order Status API (e.g., Mark as Completed)
+export const updateOrderStatusApi = async (orderId, newStatus) => {
+  try {
+    const token = localStorage.getItem('token');
+
+    const response = await API.put(`/orders/accept-order`, 
+      { status: newStatus }, 
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    throw new Error('Failed to update order status.');
+  }
+};
+
+// // src/api/loaderAPI.js mein yeh add karein
+// export const fetchAcceptedOrdersApi = async () => {
+//   try {
+//     const token = localStorage.getItem('token');
+//     const response = await API.get('/orders/accept-order', {
+//       headers: { Authorization: `Bearer ${token}` }
+//     });
+//     return response.data; // { success: true, data: [...] }
+//   } catch (error) {
+//     throw error.response?.data || { message: 'Failed to fetch accepted orders.' };
+//   }
+// };

@@ -40,10 +40,12 @@ const Login = () => {
         setTimeout(() => {
           if (formData.role === 'loader') {
             // navigate('/loader-dashboard'); 
-            navigate('/dashboard')
+            navigate('/loader/dashboard')
+          } else if (formData.role == 'shop_owner') {
+            navigate('/shop/dashboard')
           } else {
             // navigate('/shop-dashboard'); 
-            navigate('/')
+            navigate('/login')
           }
         }, 1500);
       }

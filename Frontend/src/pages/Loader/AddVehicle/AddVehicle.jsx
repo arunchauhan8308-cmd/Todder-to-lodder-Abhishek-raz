@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { addVehicleApi } from '../../api/api'; 
+import { addVehicleApi } from '../../../api/api'; 
 import './AddVehicle.css';
 
 const AddVehicle = () => {
@@ -124,7 +124,7 @@ const AddVehicle = () => {
       setSuccessMessage(`Vehicle added successfully! Status is ${statusToApply}.`);
       
       setTimeout(() => {
-        navigate('/dashboard');
+        navigate('/loader/loader/dashboard');
       }, 1500);
 
     } catch (error) {
@@ -139,7 +139,7 @@ const AddVehicle = () => {
     <div className="add-vehicle-wrapper">
       <div className="add-vehicle-card">
         
-        <button type="button" className="back-button" onClick={() => navigate('/dashboard')}>
+        <button type="button" className="back-button" onClick={() => navigate('/loader/dashboard')}>
           ← Back to Dashboard
         </button>
 

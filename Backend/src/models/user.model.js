@@ -31,7 +31,7 @@ const UserSchema = new mongoose.Schema({
     },
     is_verified: {
         type: Boolean,
-        default: false
+        default: true
     },
     rating_avg: {
         type: Number,

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAllVehiclesApi, updateVehicleAvailabilityApi } from '../../api/api';
+import { getAllVehiclesApi, updateVehicleAvailabilityApi } from '../../../api/api';
 import './AllVehicles.css';
 
 const AllVehicles = () => {
@@ -63,7 +63,7 @@ const AllVehicles = () => {
         
         {/* Top Header */}
         <div className="vehicles-header">
-          <button className="back-button" onClick={() => navigate('/dashboard')}>
+          <button className="back-button" onClick={() => navigate('/loader/dashboard')}>
             ← Back to Dashboard
           </button>
         </div>
