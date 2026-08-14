@@ -127,14 +127,14 @@
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 10px;
   font-size: 15px;
-  color: #ffffff; /* White text when typing */
-  background-color: rgba(0, 0, 0, 0.4); /* Dark inputs */
+  color: #ffffff !important; /* Forces typed text color to remain white */
+  background-color: #0f172a !important; /* Forces dark background */
   transition: all 0.3s ease;
   outline: none;
 }
 
 .form-control::placeholder {
-  color: #475569; /* Darker placeholder */
+  color: #64748b; /* Muted grey placeholder for good visibility */
 }
 
 /* Fix dropdown option colors */
@@ -149,9 +149,11 @@
 }
 
 .form-control:focus {
-  background-color: rgba(0, 0, 0, 0.6);
-  border-color: #3b82f6;
-  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3); /* Electric blue glow */
+  background-color: #0f172a !important; /* Explicitly keep it dark */
+  color: #ffffff !important;            /* Explicitly keep text white */
+  border-color: #3b82f6 !important;
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.3) !important; /* Electric blue glow */
+  outline: none;
 }
 
 /* Badass Neon Button */
