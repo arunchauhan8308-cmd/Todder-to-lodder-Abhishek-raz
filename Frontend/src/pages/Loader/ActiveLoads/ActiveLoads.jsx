@@ -37,7 +37,7 @@ const ActiveLoads = () => {
     try {
       // 1. Fetch loader vehicle using separate API function
       const vehicleRes = await getAllVehiclesApi();
-      const vehicleData = vehicleRes.data || vehicleRes;
+      const vehicleData = vehicleRes.data;
 
       if (!vehicleData) {
         setErrorMessage('You must register a vehicle before viewing or accepting orders.');
@@ -45,7 +45,7 @@ const ActiveLoads = () => {
         return;
       }
       setLoaderVehicle(vehicleData);
-      console.log(loaderVehicle)
+      
 
       // 2. Fetch nearby orders using separate API function
       const ordersRes = await fetchNearbyOrdersApi();
@@ -57,10 +57,8 @@ const ActiveLoads = () => {
       setIsLoading(false);
     }
   };
-
+  console.log(loaderVehicle)
   const handleAcceptOrder = async (orderId) => {
-    console.log('Loader: ',loaderVehicle)
-    console.log('Id: ', loaderVehicle[0]._id)
     if (!loaderVehicle || !loaderVehicle[0]._id) {
       setErrorMessage('No vehicle found. You cannot accept orders without a registered vehicle.');
       return;

@@ -13,36 +13,31 @@ exports.getNearbyOrders = async (req, res) => {
 
         // 2. Find the Loader's Vehicle to get their location and vehicle type
         const loaderVehicle = await vehicleModel.findOne({ loader_id: loaderId });
-        console.log(loaderVehicle)
+        console.log("Loader Vehicle Found:", loaderVehicle);
 
         if (!loaderVehicle) {
             return res.status(404).json({ success: false, message: "Vehicle not found. Please register a vehicle first." });
         }
 
-        // if (loaderVehicle.document_status !== 'verified') {
-        //     return res.status(403).json({ success: false, message: "Your vehicle documents are not verified yet." });
-        // }
+        const loaderCoordinates = loaderVehicle.current_location?.coordinates;
+        const loaderVehicleType = loaderVehicle.vehicle_type; // Loader ka vehicle type (jaise 'tempo')
 
-        // Extract loader's current coordinates
-        const loaderCoordinates = loaderVehicle.current_location.coordinates;
-
-        // 3. Find Nearby Orders
-        // We query the Order collection using the 2dsphere index on 'pickup.location'
-        const MAX_DISTANCE_METERS = 10000; // 10 km radius
+        // 3. Find Nearby Orders matching the exact vehicle type requested
+        const MAX_DISTANCE_METERS = 100000; // 100 km radius
 
         const availableOrders = await OrderModel.find({
-            status: 'requested', // Only show orders that haven't been accepted yet[cite: 1]
-            vehicle_type_requested: loaderVehicle.vehicle_type, // Match the loader's vehicle type[cite: 1]
+            status: 'requested', 
+            vehicle_type_requested: loaderVehicleType, // 🚀 Exact match loader vehicle type
             'pickup.location': {
                 $near: {
                     $geometry: { 
                         type: 'Point', 
-                        coordinates: loaderCoordinates // [lng, lat] of the loader
+                        coordinates: loaderCoordinates 
                     },
                     $maxDistance: MAX_DISTANCE_METERS
                 }
             }
-        }).sort({ createdAt: -1 }); // Show newest orders first
+        }).sort({ createdAt: -1 });
 
         return res.status(200).json({
             success: true,
@@ -50,6 +45,53 @@ exports.getNearbyOrders = async (req, res) => {
             data: availableOrders
         });
 
+    } catch (error) {
+        console.error("Error fetching nearby orders:", error);
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+
+exports.rateLoader = async (req, res) => {
+    try {
+        const { orderId, loaderId, rating, review } = req.body;
+        const shopOwnerId = req.user.id;
+
+        const order = await OrderModel.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found." });
+        }
+
+        // Check karein ki order pehle hi rated toh nahi hai
+        if (order.is_rated) {
+            return res.status(400).json({ success: false, message: "Order has already been rated." });
+        }
+
+        // Order ko update karein
+        order.is_rated = true;
+        order.rating = Number(rating);
+        order.review = review;
+        await order.save();
+
+        // Loader ki average rating update karein
+        const LoaderModel = require('../models/order.model'); // Apna model path check kar lein
+        const loader = await LoaderModel.findById(loaderId);
+        if (loader) {
+            const currentTotalRatings = loader.total_ratings || 0;
+            const currentRatingSum = (loader.rating || 5.0) * currentTotalRatings;
+            
+            const newTotalRatings = currentTotalRatings + 1;
+            const newAverageRating = (currentRatingSum + Number(rating)) / newTotalRatings;
+
+            loader.rating = Number(newAverageRating.toFixed(1));
+            loader.total_ratings = newTotalRatings;
+            await loader.save();
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: "Rating submitted successfully!"
+        });
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });
     }

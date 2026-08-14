@@ -18,6 +18,7 @@ import ProtectedRoute from './components/ProtectedRoute'
 import PaymentHistory from './pages/Shop_Owner/PaymentHistory/PaymentHistory'
 import ShopProfile from './pages/Shop_Owner/ShopProfile/ShopProfile'
 import LoaderHistoryOrder from './pages/Loader/LoaderHistoryOrder/LoaderHistoryOrder'
+import LoaderCompleteOrder from './pages/Loader/LoaderCompleteOrder/LoaderCompleteOrder'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -37,6 +38,7 @@ function App() {
         <Route path='/accept-orders' element={<ProtectedRoute allowedRole="loader"><AcceptedOrders /></ProtectedRoute>} />
         <Route path='/order-details' element={<ProtectedRoute allowedRole="loader"><OrderDetails /></ProtectedRoute>} />
         <Route path='/orders' element={<ProtectedRoute allowedRole="loader"><LoaderHistoryOrder /></ProtectedRoute>} />
+        <Route path='/loader/complete-order' element={<ProtectedRoute allowedRole="loader"><LoaderCompleteOrder /></ProtectedRoute>} />
 
 
         {/* ================= SHOP OWNER ROUTES ================= */}

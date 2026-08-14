@@ -95,7 +95,6 @@ export const getAllVehiclesApi = async () => {
         Authorization: `Bearer ${token}`
       }
     });
-
     return response.data;
   } catch (error) {
     if (error.response && error.response.data) {
@@ -211,7 +210,6 @@ export const fetchOrderDetailsApi = async (orderId) => {
         Authorization: `Bearer ${token}`
       }
     });
-    console.log(response)
     return response.data;
   } catch (error) {
     if (error.response && error.response.data) {
@@ -225,22 +223,50 @@ export const fetchOrderDetailsApi = async (orderId) => {
 export const updateOrderStatusApi = async (orderId, newStatus) => {
   try {
     const token = localStorage.getItem('token');
-
-    const response = await API.put(`/orders/accept-order`, 
+    const response = await API.put(`/orders/${orderId}/status`, 
       { status: newStatus }, 
       {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+        headers: { Authorization: `Bearer ${token}` }
       }
     );
-
-    return response.data;
+    return response.data; // { success: true, message: "...", data: order }
   } catch (error) {
     if (error.response && error.response.data) {
       throw error.response.data;
     }
     throw new Error('Failed to update order status.');
+  }
+};
+
+
+export const rateLoaderApi = async (ratingData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await API.post('/orders/rate-loader', ratingData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error) {
+    // Backend se aane wala custom error message throw karein, warna default message
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    throw new Error('Failed to submit rating. Please try again.');
+  }
+};
+
+export const updatePaymentStatusApi = async (orderId, paymentData) => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await API.put(`/orders/${orderId}/payment`, paymentData, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data;
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    throw new Error('Failed to update payment status. Please try again.');
   }
 };
 
@@ -256,3 +282,18 @@ export const updateOrderStatusApi = async (orderId, newStatus) => {
 //     throw error.response?.data || { message: 'Failed to fetch accepted orders.' };
 //   }
 // };
+
+export const fetchLoaderHistoryApi = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    const response = await API.get('/orders/loader-history', { // Yeh route aapke backend mein hona chahiye
+      headers: { Authorization: `Bearer ${token}` }
+    });
+    return response.data; // Yeh { total_earnings, rating, data } return karega
+  } catch (error) {
+    if (error.response && error.response.data) {
+      throw error.response.data;
+    }
+    throw new Error('Failed to fetch loader stats.');
+  }
+};

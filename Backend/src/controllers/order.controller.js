@@ -3,6 +3,8 @@ const { calculateDistance } = require('../utils/distanceCalculator');
 const OrderModel = require('../models/order.model');
 const VehicleModel = require('.././models/vehicle.model')
 const PaymentModel = require('../models/payment.model'); // Aapka Payment schema model
+const {LoaderModel  } = require('../models/user.model')
+
 
 
 
@@ -192,11 +194,12 @@ exports.getAcceptedOrders = async (req, res) => {
             return res.status(403).json({ success: false, message: "Only loaders can access this route" });
         }
 
-        // Aap chahein toh status mein 'accepted', 'arrived', 'loaded', 'in_transit' sabhi ko include kar sakte hain
         const acceptedOrders = await OrderModel.find({
             loader_id: loaderId,
             status: { $in: ['accepted', 'arrived', 'loaded', 'in_transit'] }
-        }).sort({ updatedAt: -1 });
+        })
+        .populate('shop_owner_id', 'name phone email') // 🚀 Schema ke exact field name ke sath populate
+        .sort({ updatedAt: -1 });
 
         return res.status(200).json({
             success: true,
@@ -235,10 +238,11 @@ exports.getShopOwnerOrders = async (req, res) => {
 };
 
 // Order status update (e.g., Completed)
+
 exports.updateOrderStatus = async (req, res) => {
     try {
         const { orderId } = req.params;
-        const { status } = req.body; // 'accepted', 'in_transit', 'completed', etc.
+        const { status } = req.body; // 'completed', etc.
         const loaderId = req.user.id;
 
         const order = await OrderModel.findById(orderId);
@@ -247,18 +251,33 @@ exports.updateOrderStatus = async (req, res) => {
             return res.status(404).json({ success: false, message: "Order not found." });
         }
 
-        // Optional check: Ensure yahi loader assigned hai
+        // Ensure yahi loader assigned hai
         if (order.loader_id && order.loader_id.toString() !== loaderId.toString()) {
             return res.status(403).json({ success: false, message: "Unauthorized to update this order." });
         }
 
+        // Agar order pehle hi completed hai, toh dubara earnings add na ho
+        const isNewlyCompleted = status === 'delivered' && order.status !== 'delivered';
+
         order.status = status;
         order.status_history.push({ status, timestamp: new Date() });
-        if (status === 'completed') {
-            order.final_fare = order.estimated_fare;
+
+        if (status === 'delivered') {
+            order.final_fare = order.estimated_fare || 0;
         }
 
         await order.save();
+
+        // 🚀 Agar order pehli baar complete hua hai, toh loader ki earnings mein amount add karein
+        if (isNewlyCompleted) {
+            const earnedAmount = order.estimated_fare || 0;
+            
+            // Loader model mein total earnings update karein 
+            // (Note: Agar aapka model ka naam ya field alag ho jaise 'totalEarnings' ya 'earnings', toh use apne schema ke mutabiq check kar lein)
+            await LoaderModel.findByIdAndUpdate(loaderId, {
+                $inc: { total_earnings: earnedAmount, completed_orders_count: 1 } 
+            });
+        }
 
         return res.status(200).json({
             success: true,
@@ -277,16 +296,48 @@ exports.getLoaderEarningsAndHistory = async (req, res) => {
     try {
         const loaderId = req.user.id;
 
-        const loader = await UserModel.findById(loaderId);
+        const loader = await LoaderModel.findById(loaderId); // Ya LoaderModel.findById(loaderId)
+        
+        // Delivered ya completed orders fetch karein
         const completedOrders = await OrderModel.find({ 
             loader_id: loaderId, 
-            status: 'completed' 
+            status: { $in: ['delivered', 'completed'] } 
         }).sort({ updatedAt: -1 });
+
+        // 🚀 Total Earnings khud calculate karein (estimated_fare ya final_fare ka sum)
+        const calculatedTotalEarnings = completedOrders.reduce((sum, order) => {
+            return sum + (order.final_fare || order.estimated_fare || 0);
+        }, 0);
 
         return res.status(200).json({
             success: true,
-            total_earnings: loader ? loader.total_earnings || 0 : 0,
+            total_earnings: calculatedTotalEarnings, // 🌟 Ab saare completed orders ka total fare yahan aayega
+            rating: loader ? loader.rating || 5.0 : 5.0,
             data: completedOrders
+        });
+    } catch (error) {
+        return res.status(500).json({ success: false, message: error.message });
+    }
+};
+
+
+exports.updatePaymentStatus = async (req, res) => {
+    try {
+        const { orderId } = req.params;
+        const { payment_status } = req.body; // 'paid'
+
+        const order = await OrderModel.findById(orderId);
+        if (!order) {
+            return res.status(404).json({ success: false, message: "Order not found." });
+        }
+
+        order.payment_status = payment_status || 'paid';
+        await order.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "Payment status updated to paid successfully!",
+            data: order
         });
     } catch (error) {
         return res.status(500).json({ success: false, message: error.message });

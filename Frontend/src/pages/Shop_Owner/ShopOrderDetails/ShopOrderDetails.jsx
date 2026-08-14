@@ -1,19 +1,23 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { fetchOrderDetailsApi } from '../../../api/shopOwnerAPI';
+import { fetchOrderDetailsApi, rateLoaderApi, updatePaymentStatusApi } from '../../../api/api';
 import './ShopOrderDetails.css';
 
 const ShopOrderDetails = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // State ke through aane wala order ya orderId
   const passedOrder = location.state?.order || null;
   const orderId = location.state?.orderId || passedOrder?._id;
 
   const [order, setOrder] = useState(passedOrder);
   const [isLoading, setIsLoading] = useState(!passedOrder && Boolean(orderId));
   const [errorMessage, setErrorMessage] = useState('');
+  
+  const [rating, setRating] = useState(5);
+  const [review, setReview] = useState('');
+  const [isSubmittingRating, setIsSubmittingRating] = useState(false);
+  const [isUpdatingPayment, setIsUpdatingPayment] = useState(false);
 
   useEffect(() => {
     if (orderId && !order) {
@@ -36,6 +40,51 @@ const ShopOrderDetails = () => {
       setErrorMessage(error.message || 'Failed to load order information.');
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  // ⭐ Direct Rating Submission
+  const handleRatingSubmit = async (e) => {
+    e.preventDefault();
+    if (!order?.loader_id?._id && !order?.loader_id) return;
+
+    setIsSubmittingRating(true);
+    try {
+      const loaderId = order.loader_id._id || order.loader_id;
+      await rateLoaderApi({
+        orderId: order._id,
+        loaderId: loaderId,
+        rating: Number(rating),
+        review: review
+      });
+      
+      // Local state update for rating
+      setOrder(prevOrder => ({
+        ...prevOrder,
+        is_rated: true
+      }));
+    } catch (err) {
+      alert(err.message || 'Failed to submit rating.');
+    } finally {
+      setIsSubmittingRating(false);
+    }
+  };
+
+  // 💵 Direct Payment Confirmation without full page reload
+  const handlePaymentConfirm = async () => {
+    setIsUpdatingPayment(true);
+    try {
+      await updatePaymentStatusApi(order._id, { payment_status: 'paid' });
+      
+      // Instant local state update to prevent UI reset/reload
+      setOrder(prevOrder => ({
+        ...prevOrder,
+        payment_status: 'paid'
+      }));
+    } catch (err) {
+      alert(err.message || 'Failed to update payment status.');
+    } finally {
+      setIsUpdatingPayment(false);
     }
   };
 
@@ -140,6 +189,60 @@ const ShopOrderDetails = () => {
                 </div>
               </div>
             </div>
+
+            {/* 💵 Payment / Cash on Delivery Section */}
+            <div className="payment-section-card" style={{ background: '#f9fafb', padding: '16px', borderRadius: '8px', margin: '20px 0' }}>
+              <h4>Payment Details</h4>
+              <p>Status: <strong>{order.payment_status?.toUpperCase() || 'PENDING (COD)'}</strong></p>
+              {order.payment_status !== 'paid' && (
+                <button 
+                  className="pay-confirm-btn" 
+                  onClick={handlePaymentConfirm} 
+                  disabled={isUpdatingPayment}
+                  style={{ background: '#059669', color: 'white', border: 'none', padding: '10px 16px', borderRadius: '6px', cursor: 'pointer', marginTop: '10px', fontWeight: 'bold' }}
+                >
+                  {isUpdatingPayment ? 'Updating...' : 'Confirm Cash Paid / COD Received 💵'}
+                </button>
+              )}
+            </div>
+
+            {/* ⭐ Rating Section */}
+            {(order.status === 'delivered' || order.status === 'completed') && (
+              <div className="rating-section-card" style={{ background: '#fef3c7', padding: '20px', borderRadius: '8px', margin: '20px 0' }}>
+                <h4>⭐ Rate Your Delivery Partner</h4>
+                {order.is_rated ? (
+                  <p>✅ You have already rated this delivery.</p>
+                ) : (
+                  <form onSubmit={handleRatingSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '10px', marginTop: '10px' }}>
+                    <div>
+                      <label>Rating (1 to 5): </label>
+                      <select value={rating} onChange={(e) => setRating(e.target.value)} style={{ padding: '6px', borderRadius: '4px' }}>
+                        <option value="5">⭐⭐⭐⭐⭐ (5)</option>
+                        <option value="4">⭐⭐⭐⭐ (4)</option>
+                        <option value="3">⭐⭐⭐ (3)</option>
+                        <option value="2">⭐⭐ (2)</option>
+                        <option value="1">⭐ (1)</option>
+                      </select>
+                    </div>
+                    <div>
+                      <textarea 
+                        placeholder="Write a short review (optional)..." 
+                        value={review} 
+                        onChange={(e) => setReview(e.target.value)}
+                        style={{ width: '100%', padding: '8px', borderRadius: '6px', border: '1px solid #d1d5db' }}
+                      />
+                    </div>
+                    <button 
+                      type="submit" 
+                      disabled={isSubmittingRating}
+                      style={{ background: '#2563eb', color: 'white', border: 'none', padding: '10px', borderRadius: '6px', fontWeight: 'bold', cursor: 'pointer' }}
+                    >
+                      {isSubmittingRating ? 'Submitting...' : 'Submit Rating & Review'}
+                    </button>
+                  </form>
+                )}
+              </div>
+            )}
 
             {order.status_history && order.status_history.length > 0 && (
               <div className="history-section">

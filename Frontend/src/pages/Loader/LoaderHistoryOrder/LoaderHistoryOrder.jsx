@@ -19,7 +19,7 @@ const LoaderHistoryOrder = () => {
     if (activeTab === 'available') {
       loadNearbyOrders();
     } else {
-      loadAcceptedOrders(); // 🚀 Yeh nayi API call hogi jo accepted orders layegi
+      loadAcceptedOrders();
     }
   }, [activeTab]);
 
@@ -40,7 +40,7 @@ const LoaderHistoryOrder = () => {
     }
   };
 
-  // 2. Accepted/My Deliveries fetch karne ke liye (Nayi API)
+  // 2. Accepted/My Deliveries fetch karne ke liye
   const loadAcceptedOrders = async () => {
     setIsLoading(true);
     setErrorMessage('');
@@ -69,7 +69,7 @@ const LoaderHistoryOrder = () => {
       await acceptOrderApi(orderId, vehicleId);
       
       alert('Order accepted successfully! 🎉');
-      setActiveTab('accepted'); // Accept hote hi automatic Accepted tab par switch ho jayega
+      setActiveTab('accepted');
 
     } catch (err) {
       console.error("Error accepting order:", err);
@@ -85,7 +85,15 @@ const LoaderHistoryOrder = () => {
   return (
     <div className="loader-dashboard-wrapper">
       <nav className="loader-nav">
-        <div className="nav-brand">
+        <div className="nav-brand" style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          {/* 🔙 Yahan Back Button add kiya gaya hai */}
+          <button 
+            className="back-btn" 
+            onClick={() => navigate('/loader/dashboard')}
+            style={{ background: '#374151', color: 'white', border: 'none', padding: '8px 12px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold' }}
+          >
+            ← Back
+          </button>
           <h2>Vehicle Loader Dashboard 🚚</h2>
         </div>
         <div className="nav-user-info" style={{ display: 'flex', gap: '10px', alignItems: 'center' }}>
@@ -191,7 +199,7 @@ const LoaderHistoryOrder = () => {
                   ) : (
                     <button 
                       className="details-btn" 
-                      onClick={() => navigate('/loader/order-detail', { state: { order } })}
+                      onClick={() => navigate('/loader/complete-order', { state: { order } })}
                     >
                       View Status & Complete 📋
                     </button>
