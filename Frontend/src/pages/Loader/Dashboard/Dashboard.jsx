@@ -217,7 +217,7 @@ const Dashboard = () => {
             <div className="metric-icon">⭐</div>
             <div className="metric-data">
               <span className="metric-value">
-                {user.role === 'loader' ? loaderStats.rating : '5.0'}
+                {user.role === 'loader' ? loaderStats.rating : '0.0'}
               </span>
               <span className="metric-title">Performance Rating</span>
             </div>

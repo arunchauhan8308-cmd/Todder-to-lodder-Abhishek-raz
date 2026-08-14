@@ -67,6 +67,7 @@ exports.rateLoader = async (req, res) => {
             return res.status(400).json({ success: false, message: "Order has already been rated." });
         }
 
+
         // Order ko update karein
         order.is_rated = true;
         order.rating = Number(rating);
